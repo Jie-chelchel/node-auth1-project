@@ -1,4 +1,3 @@
-const { userInfo } = require("os");
 const db = require("../../data/db-config");
 
 function find() {
