@@ -8,7 +8,11 @@ const User = require("../users/users-model");
   }
 */
 function restricted(req, res, next) {
-  next();
+  if (!req.session.user) {
+    res.status(401).json({ message: "You shall not pass!" });
+  } else {
+    next();
+  }
 }
 
 async function checkUsernameFree(req, res, next) {
@@ -34,8 +38,9 @@ async function checkUsernameFree(req, res, next) {
 */
 async function checkUsernameExists(req, res, next) {
   try {
-    const user = await User.findBy({ username: req.body.username });
-    if (user.length) {
+    const users = await User.findBy({ username: req.body.username });
+    if (users.length) {
+      req.user = users[0];
       next();
     } else {
       res.status(401).json({ message: "Invalid credentials" });
